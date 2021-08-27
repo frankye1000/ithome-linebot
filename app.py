@@ -4,7 +4,10 @@ import os
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, FollowEvent, TextMessage, TextSendMessage, StickerMessage, StickerSendMessage
+from linebot.models import MessageEvent, FollowEvent, TextMessage, TextSendMessage, StickerMessage, StickerSendMessage, \
+    CarouselColumn, URITemplateAction, TemplateSendMessage, CarouselTemplate
+from crawl_ithome import crawl_ithome
+
 app = Flask(__name__)
 
 # LINE 聊天機器人的基本資料
@@ -27,26 +30,61 @@ def callback():
     return 'OK'
 
 
-# 學你說話
-@handler.add(MessageEvent, message=TextMessage)
-def echo(event):
-    if event.source.user_id != "Udeadbeefdeadbeefdeadbeefdeadbeef":
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=event.message.text)
-        )
+# 創一個class 可以依照不同資料數量創造不一樣長度的carousel_template
+class carousel_column():
+    def createcolumn(photo, title, url):
+        c = CarouselColumn(
+                thumbnail_image_url = photo,
+                title=title,
+                text='欲更多資訊 請點擊『更多』',
+                actions=[
+                    URITemplateAction(
+                        label='更多',
+                        uri=url)])
+        return c
+
+
+## 整理傳送資料
+def carousel_template_message():
+    ithome = crawl_ithome()
+    if len(ithome) == 0:
+        return "NoNews"
+    else:
+        # 因為carousel_template一次只能送5個tempalte
+        # 例 : [[(),(),(),(),()],[(),(),()]]
+
+        ithome_data = [ithome[i:i+5] for i in range(0,len(ithome),5)]
+        ithome_data = [[carousel_column.createcolumn(d[3],d[0],d[1]) for d in data] for data in ithome_data]
+        ithome_data = [TemplateSendMessage(alt_text='Carousel template', template=CarouselTemplate(columns=data)) for data in ithome_data]
+        #[{},{},{}]
+        return ithome_data
+
+
+
+
+
+
+
+
+
 
 
 # 丟貼圖給ithome機器人的回應
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_message(event):
-    line_bot_api.reply_message(event.reply_token, TextSendMessage(text="您好，\n歡迎使用iThome聊天機器人"))
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text="您好，歡迎使用iThome聊天機器人"))
 
 
 # 丟訊息給ithome機器人的回應
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    line_bot_api.reply_message(event.reply_token, TextSendMessage(text="您好，\n歡迎使用iThome聊天機器人"))
+    carousel_template = carousel_template_message()
+    if carousel_template == "NoNews":
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="沒有最新新聞"))
+    else:
+
+        for template in carousel_template:
+            line_bot_api.push_message(event.source.user_id, template)
 
 
 # 追蹤ithome機器人的回應
