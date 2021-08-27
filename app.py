@@ -8,8 +8,8 @@ from linebot.models import MessageEvent, TextMessage, TextSendMessage
 app = Flask(__name__)
 
 # LINE 聊天機器人的基本資料
-line_bot_api = LineBotApi('1xO55kBmJ8Yy4gkm7jqw2HAtRWns819B4iPo2m06Js2r5nz7OHjgsgkIV1EptZPGq42RgrzjxV63j2KmLZfMvTG36aE5+i3aqkrCraRbODVGqzvC8PQufzSiZ4frb8wopgd3UFJYNLokEnmQtx0kxAdB04t89/1O/w1cDnyilFU=')
-handler = WebhookHandler('3dea4e0320b8230a11258d1e23275572')
+line_bot_api = LineBotApi("WztvLgmxILTIj5n3au6FarxMrsD+fq31tGdIdEN3YQswISf3qWGoNFKwhRdYJ8Whq42RgrzjxV63j2KmLZfMvTG36aE5+i3aqkrCraRbODUsVBIgY/y3DMdcHLBmk+I3BDXFT8WXl8mYZQtrd5XD9gdB04t89/1O/w1cDnyilFU=")
+handler = WebhookHandler("98b983cc3bb1dffceacdaf29c0575474")
 
 # 接收 LINE 的資訊
 @app.route("/callback", methods=['POST'])
