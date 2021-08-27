@@ -32,11 +32,12 @@ def callback():
 
 # 創一個class 可以依照不同資料數量創造不一樣長度的carousel_template
 class carousel_column():
-    def createcolumn(photo, title, url):
+    def createcolumn(image, title, url):
         c = CarouselColumn(
-                thumbnail_image_url = photo,
+
                 title=title,
                 text='欲更多資訊 請點擊『更多』',
+                thumbnail_image_url=image,
                 actions=[
                     URITemplateAction(
                         label='更多',
@@ -53,8 +54,8 @@ def carousel_template_message():
         # 因為carousel_template一次只能送5個tempalte
         # 例 : [[(),(),(),(),()],[(),(),()]]
 
-        ithome_data = [ithome[i:i+5] for i in range(0,len(ithome),5)]
-        ithome_data = [[carousel_column.createcolumn(d[3],d[0],d[1]) for d in data] for data in ithome_data]
+        ithome_data = [ithome[i:i+5] for i in range(0, len(ithome), 5)]
+        ithome_data = [[carousel_column.createcolumn(d[3], d[0], d[1]) for d in data] for data in ithome_data]
         ithome_data = [TemplateSendMessage(alt_text='Carousel template', template=CarouselTemplate(columns=data)) for data in ithome_data]
         #[{},{},{}]
         return ithome_data
@@ -78,13 +79,15 @@ def handle_message(event):
 # 丟訊息給ithome機器人的回應
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
+    line_bot_api.push_message(event.source.user_id, TextSendMessage(text="沒有最新新聞1"))
     carousel_template = carousel_template_message()
-    if carousel_template == "NoNews":
-        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="沒有最新新聞"))
-    else:
-
-        for template in carousel_template:
-            line_bot_api.push_message(event.source.user_id, template)
+    line_bot_api.push_message(event.source.user_id, TextSendMessage(text="沒有最新新聞2"))
+    # if carousel_template == "NoNews":
+    #     line_bot_api.reply_message(event.reply_token, TextSendMessage(text="沒有最新新聞"))
+    # else:
+    #
+    #     for template in carousel_template:
+    #         line_bot_api.push_message(event.source.user_id, template)
 
 
 # 追蹤ithome機器人的回應
