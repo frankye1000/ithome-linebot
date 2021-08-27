@@ -34,7 +34,6 @@ def callback():
 class carousel_column():
     def createcolumn(image, title, url):
         c = CarouselColumn(
-
                 title=title,
                 text='欲更多資訊 請點擊『更多』',
                 thumbnail_image_url=image,
