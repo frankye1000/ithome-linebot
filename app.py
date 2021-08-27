@@ -4,7 +4,7 @@ import os
 from flask import Flask, request, abort
 from linebot import LineBotApi, WebhookHandler
 from linebot.exceptions import InvalidSignatureError
-from linebot.models import MessageEvent, TextMessage, TextSendMessage
+from linebot.models import MessageEvent, FollowEvent, TextMessage, TextSendMessage, StickerMessage, StickerSendMessage
 app = Flask(__name__)
 
 # LINE 聊天機器人的基本資料
@@ -37,7 +37,27 @@ def echo(event):
         )
 
 
+# 丟貼圖給ithome機器人，回應的句子
+@handler.add(MessageEvent, message=StickerMessage)
+def handle_message(event):
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text="您好，\n歡迎使用iThome聊天機器人"))
+
+
+# 丟訊息給ithome機器人，回應的句子
+@handler.add(MessageEvent, message=TextMessage)
+def handle_message(event):
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text="您好，\n歡迎使用iThome聊天機器人"))
+
+
+# 追蹤ithome機器人，要回應的句子
+@handler.add(FollowEvent)
+def handle_follow_event(event):
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text="您好，\n歡迎使用iThome聊天機器人"))
+    line_bot_api.push_message(event.source.user_id, StickerSendMessage(package_id='1', sticker_id='13'))
+    line_bot_api.push_message(event.source.user_id, TextSendMessage(text="每日接收最新的iThome資訊"))
+
+
 if __name__ == "__main__":
-    #app.run()
+    # 要設定0.0.0.0 heroku 才會對外
     port = int(os.getenv("PORT", 5000))
     app.run(host="0.0.0.0", port=port)
