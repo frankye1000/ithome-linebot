@@ -48,7 +48,6 @@ class carousel_column():
 ## 整理傳送資料
 def carousel_template_message():
     ithome = crawl_ithome()
-    print(ithome)
     if len(ithome) == 0:
         return "NoNews"
     else:
@@ -59,17 +58,7 @@ def carousel_template_message():
         ithome_data = [[carousel_column.createcolumn(d[3], d[0], d[1]) for d in data] for data in ithome_data]
         ithome_data = [TemplateSendMessage(alt_text='Carousel template', template=CarouselTemplate(columns=data)) for data in ithome_data]
         #[{},{},{}]
-        print("成功整理:",ithome_data)
         return ithome_data
-
-
-
-
-
-
-
-
-
 
 
 # 丟貼圖給ithome機器人的回應
@@ -81,15 +70,12 @@ def handle_message(event):
 # 丟訊息給ithome機器人的回應
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
-    line_bot_api.push_message(event.source.user_id, TextSendMessage(text="沒有最新新聞1"))
     carousel_template = carousel_template_message()
-    line_bot_api.push_message(event.source.user_id, TextSendMessage(text="沒有最新新聞2"))
-    # if carousel_template == "NoNews":
-    #     line_bot_api.reply_message(event.reply_token, TextSendMessage(text="沒有最新新聞"))
-    # else:
-    #
-    #     for template in carousel_template:
-    #         line_bot_api.push_message(event.source.user_id, template)
+    if carousel_template == "NoNews":
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="沒有最新新聞"))
+    else:
+        for template in carousel_template:
+            line_bot_api.push_message(event.source.user_id, template)
 
 
 # 追蹤ithome機器人的回應
