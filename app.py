@@ -48,6 +48,7 @@ class carousel_column():
 ## 整理傳送資料
 def carousel_template_message():
     ithome = crawl_ithome()
+    print(ithome)
     if len(ithome) == 0:
         return "NoNews"
     else:
@@ -58,6 +59,7 @@ def carousel_template_message():
         ithome_data = [[carousel_column.createcolumn(d[3], d[0], d[1]) for d in data] for data in ithome_data]
         ithome_data = [TemplateSendMessage(alt_text='Carousel template', template=CarouselTemplate(columns=data)) for data in ithome_data]
         #[{},{},{}]
+        print("成功整理:",ithome_data)
         return ithome_data
 
 
