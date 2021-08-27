@@ -11,7 +11,7 @@ def crawl_ithome():
     for p in range(2):
 
         r = requests.get("https://www.ithome.com.tw/news?page=%s"%p)
-        soup = BeautifulSoup(r.text,"html5lib")
+        soup = BeautifulSoup(r.text, "html5lib")
         select_item = soup.select('div.item')
         for i in select_item:
             select_title = i.select('p.title')
