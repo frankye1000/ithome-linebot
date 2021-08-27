@@ -44,7 +44,7 @@ class carousel_column():
         return c
 
 
-## 整理傳送資料
+# 整理要傳送資料
 def carousel_template_message():
     ithome = crawl_ithome()
     if len(ithome) == 0:
@@ -63,7 +63,12 @@ def carousel_template_message():
 # 丟貼圖給ithome機器人的回應
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_message(event):
-    line_bot_api.reply_message(event.reply_token, TextSendMessage(text="您好，歡迎使用iThome聊天機器人"))
+    carousel_template = carousel_template_message()
+    if carousel_template == "NoNews":
+        line_bot_api.reply_message(event.reply_token, TextSendMessage(text="沒有最新新聞"))
+    else:
+        for template in carousel_template:
+            line_bot_api.push_message(event.source.user_id, template)
 
 
 # 丟訊息給ithome機器人的回應
@@ -81,7 +86,7 @@ def handle_message(event):
 @handler.add(FollowEvent)
 def handle_follow_event(event):
     line_bot_api.reply_message(event.reply_token, TextSendMessage(text="您好，歡迎使用iThome聊天機器人"))
-    line_bot_api.push_message(event.source.user_id, TextSendMessage(text="輸入任意貼圖，獲取最新的iThome資訊"))
+    line_bot_api.push_message(event.source.user_id, TextSendMessage(text="輸入任意貼圖/文字，獲取最新的iThome資訊"))
     line_bot_api.push_message(event.source.user_id, StickerSendMessage(package_id='11537', sticker_id='52002735'))
 
 
