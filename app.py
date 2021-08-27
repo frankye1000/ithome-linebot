@@ -37,24 +37,25 @@ def echo(event):
         )
 
 
-# 丟貼圖給ithome機器人，回應的句子
+# 丟貼圖給ithome機器人的回應
 @handler.add(MessageEvent, message=StickerMessage)
 def handle_message(event):
     line_bot_api.reply_message(event.reply_token, TextSendMessage(text="您好，\n歡迎使用iThome聊天機器人"))
 
 
-# 丟訊息給ithome機器人，回應的句子
+# 丟訊息給ithome機器人的回應
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     line_bot_api.reply_message(event.reply_token, TextSendMessage(text="您好，\n歡迎使用iThome聊天機器人"))
 
 
-# 追蹤ithome機器人，要回應的句子
+# 追蹤ithome機器人的回應
 @handler.add(FollowEvent)
 def handle_follow_event(event):
-    line_bot_api.reply_message(event.reply_token, TextSendMessage(text="您好，\n歡迎使用iThome聊天機器人"))
-    line_bot_api.push_message(event.source.user_id, StickerSendMessage(package_id='1', sticker_id='13'))
-    line_bot_api.push_message(event.source.user_id, TextSendMessage(text="每日接收最新的iThome資訊"))
+    line_bot_api.reply_message(event.reply_token, TextSendMessage(text="您好，歡迎使用iThome聊天機器人"))
+    line_bot_api.push_message(event.source.user_id, TextSendMessage(text="輸入任意貼圖，獲取最新的iThome資訊"))
+    line_bot_api.push_message(event.source.user_id, StickerSendMessage(package_id='11537', sticker_id='52002735'))
+
 
 
 if __name__ == "__main__":
